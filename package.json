@@ -8,14 +8,17 @@
   "scripts": {
     "start": "meteor run",
     "eslint": "eslint --ext .js .",
-    "eslint-report": "eslint --ext .js . -f node_modules/eslint-html-reporter/reporter.js -o eslint.report.html"
+    "eslint-report": "eslint --ext .js . -f node_modules/eslint-html-reporter/reporter.js -o eslint.report.html",
+    "test": "mocha --require babel-register --recursive tests/"
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "meteor-node-stubs": "^0.3.2"
   },
   "devDependencies": {
+    "babel-register": "^6.26.0",
     "eslint": "^4.12.1",
-    "eslint-html-reporter": "^0.5.2"
+    "eslint-html-reporter": "^0.5.2",
+    "mocha": "^4.0.1"
   }
 }
