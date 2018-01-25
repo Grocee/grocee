@@ -39,7 +39,7 @@ class App extends Component {
 		return (
 			<div className="container">
 				<header>
-					<h1>Todo List</h1>
+					<h1>Grocery List</h1>
 
 					<form className="new-grocery" onSubmit={this.handleSubmit.bind(this)} >
 						<input type="text" ref="textInput" placeholder="Type to add new groceries" />
