@@ -12,7 +12,7 @@ export default class GroceryItem extends Component {
 			$set: { checked: !this.props.groceries.checked },
 		});
 	}
-	 
+	
 	deleteThisGrocery() {
 		Groceries.remove(this.props.groceries._id);
 	}

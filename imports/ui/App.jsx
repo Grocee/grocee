@@ -11,15 +11,15 @@ class App extends Component {
 
 	handleSubmit(event) {
 		event.preventDefault();
-	 
+	
 		// Find the text field via the React ref
 		const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
-	 
+	
 		Groceries.insert({
 			text,
 			createdAt: new Date() // current time
 		});
-	 
+	
 		// Clear form
 		ReactDOM.findDOMNode(this.refs.textInput).value = '';
 	}

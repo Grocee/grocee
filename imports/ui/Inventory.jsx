@@ -1,7 +1,7 @@
 import { Component } from 'react';
 
-export default class Iventory extends Component {
+export default class Inventory extends Component {
 	render() {
-		return (<h1>Iventory</h1>);
+		return (<h1>Inventory</h1>);
 	}
 }
