@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -15,18 +16,16 @@ class App extends Component {
 		// Find the text field via the React ref
 		const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
 	
-		Groceries.insert({
-			text,
-			createdAt: new Date() // current time
-		});
+		// TODO: defaulting to 1 item for now, will need to change once we can get the input 
+		Meteor.call('groceries.insert', text, '1');
 	
 		// Clear form
 		ReactDOM.findDOMNode(this.refs.textInput).value = '';
 	}
  
 	renderGroceries() {
-		return this.props.groceries.map(groceries => (
-			<GroceryItem key={groceries._id} groceries={groceries} />
+		return this.props.groceries.map(grocery => (
+			<GroceryItem key={grocery._id} grocery={grocery} />
 		));
 	}
 
