@@ -36,7 +36,7 @@ export default class GroceryItem extends Component {
 					onClick={this.toggleChecked.bind(this)}
 				/>
 		
-				<span className="text">{this.props.grocery.name}</span>
+				<span className="text">{this.props.grocery.name} - {this.props.grocery.quantity}</span>
 			</li>
 		);
 	}

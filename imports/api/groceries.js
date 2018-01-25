@@ -7,13 +7,13 @@ export const Groceries = new Mongo.Collection('groceries');
 Meteor.methods({
 	'groceries.insert'(name, quantity) {
 		check(name, String);
-		check(quantity, String); // Maybe check it's a number?
+		check(quantity, String);
 
 		// TODO: also check for user
 		
 		Groceries.insert({
 			name: name,
-			quanity: quantity,
+			quantity: quantity,
 			createdAt: new Date(),
 		});
 	},

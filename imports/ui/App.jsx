@@ -15,12 +15,14 @@ class App extends Component {
 	
 		// Find the text field via the React ref
 		const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
+		const quantity = ReactDOM.findDOMNode(this.refs.quantityInput).value.trim();
 	
 		// TODO: defaulting to 1 item for now, will need to change once we can get the input 
-		Meteor.call('groceries.insert', text, '1');
+		Meteor.call('groceries.insert', text, quantity);
 	
 		// Clear form
 		ReactDOM.findDOMNode(this.refs.textInput).value = '';
+		ReactDOM.findDOMNode(this.refs.quantityInput).value = '';
 	}
  
 	renderGroceries() {
@@ -35,8 +37,10 @@ class App extends Component {
 				<header>
 					<h1>Grocery List</h1>
 
-					<form className="new-grocery" onSubmit={this.handleSubmit.bind(this)} >
+					<form className="new-grocery" onSubmit={this.handleSubmit.bind(this)}>
 						<input type="text" ref="textInput" placeholder="Type to add new groceries" />
+						<input type="text" ref="quantityInput" placeholder="Enter the quantity" />
+						<input type="submit" />
 					</form>
 				</header>
 
