@@ -5,15 +5,15 @@ import { check } from 'meteor/check';
 export const Groceries = new Mongo.Collection('groceries');
 
 Meteor.methods({
-	'groceries.insert'(name, quantity) {
+	'groceries.insert'(name, amount) {
 		check(name, String);
-		check(quantity, String);
+		check(amount, String);
 
 		// TODO: also check for user
 		
 		Groceries.insert({
 			name: name,
-			quantity: quantity,
+			amount: amount,
 			createdAt: new Date(),
 		});
 	},

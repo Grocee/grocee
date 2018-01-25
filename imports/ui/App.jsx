@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { withTracker } from 'meteor/react-meteor-data';
 
 import { Groceries } from '../api/groceries';
-import GroceryItem from './GroceryItem';
+import Grocery from './Grocery';
  
 // App component - represents the whole app
 class App extends Component {
@@ -15,24 +15,24 @@ class App extends Component {
 	
 		// Find the text field via the React ref
 		const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
-		const quantity = ReactDOM.findDOMNode(this.refs.quantityInput).value.trim();
+		const amount = ReactDOM.findDOMNode(this.refs.amountInput).value.trim();
 
 		// rudimentary input validation
-		if (!text || !quantity) {
+		if (!text || !amount) {
 			alert("Invalid input")
 			return
 		}
 	
-		Meteor.call('groceries.insert', text, quantity);
+		Meteor.call('groceries.insert', text, amount);
 	
 		// Clear form
 		ReactDOM.findDOMNode(this.refs.textInput).value = '';
-		ReactDOM.findDOMNode(this.refs.quantityInput).value = '';
+		ReactDOM.findDOMNode(this.refs.amountInput).value = '';
 	}
  
 	renderGroceries() {
 		return this.props.groceries.map(grocery => (
-			<GroceryItem key={grocery._id} grocery={grocery} />
+			<Grocery key={grocery._id} grocery={grocery} />
 		));
 	}
 
@@ -43,8 +43,8 @@ class App extends Component {
 					<h1>Grocery List</h1>
 
 					<form className="new-grocery" onSubmit={this.handleSubmit.bind(this)}>
-						<input type="text" ref="textInput" placeholder="Type to add new groceries" />
-						<input type="text" ref="quantityInput" placeholder="Enter the quantity" />
+						<input type="text" ref="textInput" placeholder="Type to add a new grocery item" />
+						<input type="text" ref="amountInput" placeholder="Enter the amount" />
 						<input type="submit" />
 					</form>
 				</header>
