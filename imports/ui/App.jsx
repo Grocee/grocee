@@ -16,8 +16,13 @@ class App extends Component {
 		// Find the text field via the React ref
 		const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
 		const quantity = ReactDOM.findDOMNode(this.refs.quantityInput).value.trim();
+
+		// rudimentary input validation
+		if (!text || !quantity) {
+			alert("Invalid input")
+			return
+		}
 	
-		// TODO: defaulting to 1 item for now, will need to change once we can get the input 
 		Meteor.call('groceries.insert', text, quantity);
 	
 		// Clear form
