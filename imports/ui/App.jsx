@@ -4,15 +4,10 @@ import ReactDOM from 'react-dom';
 import { withTracker } from 'meteor/react-meteor-data';
 
 import { Groceries } from '../api/groceries';
-import GroceryItem from './Groceries';
+import GroceryItem from './GroceryItem';
  
 // App component - represents the whole app
 class App extends Component {
-	getGroceries() {
-		return this.props.groceries.map(groceries => {
-			return (<GroceryItem key={groceries._id} groceries={groceries} />);
-		});
-	}
 
 	handleSubmit(event) {
 		event.preventDefault();
@@ -30,7 +25,7 @@ class App extends Component {
 	}
  
 	renderGroceries() {
-		return this.getGroceries().map(groceries => (
+		return this.props.groceries.map(groceries => (
 			<GroceryItem key={groceries._id} groceries={groceries} />
 		));
 	}
