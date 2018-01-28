@@ -19,3 +19,4 @@ react-meteor-data
 reactive-var
 blaze-html-templates
 meteortoys:allthings
+meteortesting:mocha
