@@ -58,7 +58,7 @@ position: relative;
 	font-size: 1em;
 }
 
-.new-grocery input:focus{
+.new-grocery input:focus {
 	outline: 0;
 }
 
@@ -113,12 +113,10 @@ header .hide-completed {
 	li {
 		padding: 12px 15px;
 	}
-
 	.search {
 		width: 150px;
 		clear: both;
 	}
-
 	.new-grocery input {
 		padding-bottom: 5px;
 	}

@@ -58,6 +58,7 @@ class App extends Component {
 }
 
 export default withTracker(() => {
+	Meteor.subscribe('groceries');
 	return {
 		groceries: Groceries.find({}, { sort: { createdAt: -1 } }).fetch()
 	};

@@ -4,6 +4,12 @@ import { check } from 'meteor/check';
  
 export const Groceries = new Mongo.Collection('groceries');
 
+if (Meteor.isServer) {
+	Meteor.publish('groceries', function taskPublication() {
+		return Groceries.find();
+	});
+}
+
 Meteor.methods({
 	'groceries.insert'(name, amount) {
 		check(name, String);
