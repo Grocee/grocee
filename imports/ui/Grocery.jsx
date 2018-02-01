@@ -42,7 +42,7 @@ export default class GroceryItem extends Component {
 }
 
 GroceryItem.propTypes = {
-	groceries: PropTypes.shape({
+	grocery: PropTypes.shape({
 		checked: PropTypes.bool,
 		name: PropTypes.string,
 		amount: PropTypes.string,
