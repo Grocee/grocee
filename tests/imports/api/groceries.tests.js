@@ -1,4 +1,4 @@
-describe('inventoryItems', function() {
+describe('Groceries', () => {
 	it('is ok', function (done) {
 		done();
 	});

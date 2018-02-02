@@ -18,7 +18,7 @@
         // "off", "warn", "error" : values to en/disable rules
         "quotes": ["off", "single"],
         "indent": ["warn", "tab"],
-        "no-unused-vars": ["error", {
+        "no-unused-vars": ["warn", {
             "vars": "all",
             "args": "all",
             "argsIgnorePattern": "^(next|_+)",
