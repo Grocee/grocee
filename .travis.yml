@@ -2,7 +2,7 @@ language: node_js
 node_js:
 - "8"
 install:
-- npm i meteor -g
+- curl https://install.meteor.com | /bin/sh
 - npm install
 script:
 - npm run eslint
