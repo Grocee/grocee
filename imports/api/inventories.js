@@ -15,27 +15,16 @@ Meteor.methods({
 		check(name, String);
 		check(amount, String);
 
-		// Make sure the user is logged in before inserting
-		if (!this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}		
+		// TODO: also check for user
 		
 		Inventories.insert({
 			name: name,
 			amount: amount,
-			owner: this.userId,
-			username: Meteor.users.findOne(this.userId).username,
 			createdAt: new Date(),
 		});
 	},
 	'inventories.remove'(itemId) {
 		check(itemId, String);
-
-		// Make sure only the owner can delete
-		const inventory = Inventories.findOne(itemId);
-		if (inventory.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
 
 		Inventories.remove(itemId);
 	},
