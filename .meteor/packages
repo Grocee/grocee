@@ -20,3 +20,4 @@ reactive-var@1.0.11
 blaze-html-templates
 meteortoys:allthings
 meteortesting:mocha
+accounts-password
