@@ -1,8 +1,10 @@
+sudo: required
 language: node_js
 node_js:
 - "8"
 install:
+- curl https://install.meteor.com | /bin/sh
 - npm install
 script:
 - npm run eslint
-- npm test
+- meteor test --once --driver-package meteortesting:mocha
