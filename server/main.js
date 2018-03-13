@@ -6,9 +6,5 @@ import '../imports/api/inventories';
 import '../imports/api/recipes';
 
 Meteor.startup(() => {
-	// code to run on server at startup
-	Accounts.onCreateUser((options, user) => {
-		user.username = options.username;
-		return user;
-	});
+	console.log('Meteor started!')
 });
