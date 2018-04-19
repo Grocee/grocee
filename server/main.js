@@ -7,5 +7,5 @@ import '../imports/api/inventories';
 import '../imports/api/recipes';
 
 Meteor.startup(() => {
-	console.log('Meteor started!')
+	console.log('Meteor started!'); // eslint-disable-line
 });
