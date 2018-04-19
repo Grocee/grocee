@@ -9,9 +9,10 @@ Meteor.publish('groceries', function() {
 });
 
 Meteor.methods({
-	'groceries.insert'(name, amount) {
+	'groceries.insert'(name, amount, grocerylistId) {
 		check(name, String);
 		check(amount, String);
+		check(grocerylistId, String);
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
@@ -27,8 +28,9 @@ Meteor.methods({
 		}
 		
 		Groceries.insert({
-			name: name,
-			amount: amount,
+			name,
+			amount,
+			grocerylistId,
 			owner: this.userId,
 			createdAt: new Date(),
 		});
@@ -43,6 +45,12 @@ Meteor.methods({
 		}
 
 		Groceries.remove(groceryId);
+	},
+	'groceries.moveList'(groceryId, grocerylistId) {
+		check(groceryId, String);
+		check(grocerylistId, String);
+
+		Groceries.update({groceryId}, {$set: {grocerylistId}});
 	},
 	'groceries.setChecked'(groceryId, setChecked) {
 		check(groceryId, String);
