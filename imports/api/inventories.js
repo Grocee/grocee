@@ -10,8 +10,9 @@ Meteor.publish('inventories', function() {
 });
 
 Meteor.methods({
-	'inventories.insert'(name) {
+	'inventories.insert'(name, listId) {
 		check(name, String);
+		check(listId, String);
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
@@ -22,13 +23,18 @@ Meteor.methods({
 			throw new Meteor.Error('name cannot be empty')
 		}
 
+		if (listId.length === 0) {
+			throw new Meteor.Error('list id cannot be empty')
+		}
+
 		let id = Inventories.insert({
 			name: name,
+			list: listId,
 			owner: this.userId,
 			createdAt: new Date(),
 		});
 
-		return Inventories.findOne(id);
+		return id;
 	},
 	'inventories.updateAmount'(itemId, amount) {
 		check(itemId, String);
