@@ -11,7 +11,6 @@ Meteor.publish('groceries', function() {
 Meteor.methods({
 	'groceries.insert'(name, amount) {
 		check(name, String);
-		check(amount, String);
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
