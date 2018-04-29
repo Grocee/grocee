@@ -9,10 +9,9 @@ Meteor.publish('groceries', function() {
 });
 
 Meteor.methods({
-	'groceries.insert'(name, amount, grocerylistId) {
+	'groceries.insert'(name, amount) {
 		check(name, String);
 		check(amount, String);
-		check(grocerylistId, String);
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
@@ -27,10 +26,9 @@ Meteor.methods({
 			throw new Meteor.Error('amount cannot be empty')
 		}
 		
-		Groceries.insert({
+		return Groceries.insert({
 			name,
 			amount,
-			grocerylistId,
 			owner: this.userId,
 			createdAt: new Date(),
 		});
@@ -62,5 +60,5 @@ Meteor.methods({
 		}
 
 		Groceries.update(groceryId, { $set: { checked: setChecked } });
-	},
+	}
 });

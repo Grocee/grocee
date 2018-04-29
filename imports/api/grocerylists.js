@@ -20,21 +20,49 @@ Meteor.methods({
 			throw new Meteor.Error('name cannot be empty')
 		}
 		
-		GroceryLists.insert({
+		return GroceryLists.insert({
 			name,
 			owner: this.userId,
-			createdAt: new Date()
+			createdAt: new Date(),
+			items: []
 		});
 	},
-	'grocerylists.remove'(grocerylistId) {
-		check(grocerylistId, String);
-        
-		// Make sure only the owner can delete
-		const grocery = GroceryLists.findOne(grocerylistId);
-		if (grocery.owner !== this.userId) {
+	'grocerylists.addItem'(groceryListId, groceryItemId) {
+		check(groceryListId, String);
+		check(groceryItemId, String);
+
+		const groceryList = GroceryLists.findOne(groceryListId);
+		if ( groceryList.owner !== this.userId) {
 			throw new Meteor.Error('not-authorized');
 		}
 
-		GroceryLists.remove(grocerylistId);
+		const items = groceryList.items;
+		items.push(groceryItemId);
+		GroceryLists.update(groceryListId, { $set: { items }});
+	},
+	'grocerylists.remove'(groceryListId) {
+		check(groceryListId, String);
+        
+		// Make sure only the owner can delete
+		const groceryList = GroceryLists.findOne(groceryListId);
+		if (groceryList.owner !== this.userId) {
+			throw new Meteor.Error('not-authorized');
+		}
+
+		GroceryLists.remove(groceryListId);
+	},
+	'grocerylists.removeItem'(groceryListId, groceryItemId) {
+		check(groceryListId, String);
+		check(groceryItemId, String);
+
+		// Make sure only the owner can delete
+		const groceryList = GroceryLists.findOne(groceryListId);
+		if (groceryList.owner !== this.userId) {
+			throw new Meteor.Error('not-authorized');
+		}
+        
+		const items = groceryList.items.filter(groceryItem => groceryItem !== groceryItemId);
+        
+		GroceryLists.update(groceryListId, { $set: { items }});
 	}
 });
