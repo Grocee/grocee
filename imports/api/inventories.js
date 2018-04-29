@@ -22,11 +22,13 @@ Meteor.methods({
 			throw new Meteor.Error('name cannot be empty')
 		}
 
-		Inventories.insert({
+		let id = Inventories.insert({
 			name: name,
 			owner: this.userId,
 			createdAt: new Date(),
 		});
+
+		return id;
 	},
 	'inventories.updateAmount'(itemId, amount) {
 		check(itemId, String);
