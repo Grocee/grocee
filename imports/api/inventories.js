@@ -28,7 +28,7 @@ Meteor.methods({
 			createdAt: new Date(),
 		});
 
-		return id;
+		return Inventories.findOne(id);
 	},
 	'inventories.updateAmount'(itemId, amount) {
 		check(itemId, String);
