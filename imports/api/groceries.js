@@ -8,6 +8,14 @@ Meteor.publish('groceries', function() {
 	return Groceries.find({ owner: this.userId });
 });
 
+const authCheck = (groceryId) => {
+	// Make sure only the owner can delete
+	const grocery = Groceries.findOne(groceryId);
+	if (grocery.owner !== this.userId) {
+		throw new Meteor.Error('not-authorized');
+	}
+}
+
 Meteor.methods({
 	'groceries.insert'(name, amount) {
 		check(name, String);
@@ -20,10 +28,6 @@ Meteor.methods({
 		if (name.length === 0) {
 			throw new Meteor.Error('name cannot be empty')
 		}
-
-		if (amount.length === 0) {
-			throw new Meteor.Error('amount cannot be empty')
-		}
 		
 		return Groceries.insert({
 			name,
@@ -34,30 +38,43 @@ Meteor.methods({
 	},
 	'groceries.remove'(groceryId) {
 		check(groceryId, String);
-
-		// Make sure only the owner can delete
-		const grocery = Groceries.findOne(groceryId);
-		if (grocery.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
+		authCheck(groceryId);
 
 		Groceries.remove(groceryId);
-	},
-	'groceries.moveList'(groceryId, grocerylistId) {
-		check(groceryId, String);
-		check(grocerylistId, String);
-
-		Groceries.update({groceryId}, {$set: {grocerylistId}});
 	},
 	'groceries.setChecked'(groceryId, setChecked) {
 		check(groceryId, String);
 		check(setChecked, Boolean);
-
-		const grocery = Groceries.findOne(groceryId);
-		if (grocery.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
+		authCheck(groceryId);
 
 		Groceries.update(groceryId, { $set: { checked: setChecked } });
+	},
+	'groceries.updateName'(groceryId, name) {
+		check(groceryId, String);
+		check(name, String);
+		authCheck(groceryId);
+
+		try {
+			Groceries.updateOne(
+				{ _id: groceryId },
+				{ $set: { name } }
+			);
+		} catch (e) {
+			// TODO
+		}
+	},
+	'groceries.updateAmount'(groceryId, amount) {
+		check(groceryId, String);
+		check(amount, String);
+		authCheck(groceryId);
+
+		try {
+			Groceries.updateOne(
+				{ _id: groceryId },
+				{ $set: { name } }
+			);
+		} catch (e) {
+			// TODO
+		}
 	}
 });

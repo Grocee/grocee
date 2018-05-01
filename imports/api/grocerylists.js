@@ -66,3 +66,6 @@ Meteor.methods({
 		GroceryLists.update(groceryListId, { $set: { items }});
 	}
 });
+
+// TODO move item to new list
+// TODO add validation
