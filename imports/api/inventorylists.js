@@ -18,10 +18,10 @@ Meteor.methods({
 		}
 
 		if (name.length === 0) {
-			throw new Meteor.Error('name cannot be empty')
+			throw new Meteor.Error('Name cannot be empty')
 		}
 
-		InventoryLists.insert({
+		return InventoryLists.insert({
 			name,
 			owner: this.userId,
 			items: [],
@@ -52,7 +52,11 @@ Meteor.methods({
 		// check if item exists
 		const item = Inventories.findOne(itemId);
 		if (!item) {
-			throw new Meteor.Error('item does not exist')
+			throw new Meteor.Error('Item does not exist')
+		}
+
+		if (item.owner !== this.userId) {
+			throw new Meteor.Error('not-authorized');
 		}
 
 		// push method to add to list

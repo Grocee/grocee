@@ -10,9 +10,8 @@ Meteor.publish('inventories', function() {
 });
 
 Meteor.methods({
-	'inventories.insert'(name, listId) {
+	'inventories.insert'(name) {
 		check(name, String);
-		check(listId, String);
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
@@ -20,21 +19,14 @@ Meteor.methods({
 		}
 
 		if (name.length === 0) {
-			throw new Meteor.Error('name cannot be empty')
+			throw new Meteor.Error('Name cannot be empty')
 		}
 
-		if (listId.length === 0) {
-			throw new Meteor.Error('list id cannot be empty')
-		}
-
-		let id = Inventories.insert({
+		return Inventories.insert({
 			name: name,
-			list: listId,
 			owner: this.userId,
 			createdAt: new Date(),
 		});
-
-		return id;
 	},
 	'inventories.updateAmount'(itemId, amount) {
 		check(itemId, String);
@@ -49,7 +41,12 @@ Meteor.methods({
 		}
 
 		if (amount.length === 0) {
-			throw new Meteor.Error('amount cannot be empty')
+			throw new Meteor.Error('Amount cannot be empty')
+		}
+
+		let inventory = Inventories.findOne(itemId);
+		if (inventory.owner !== this.userId) {
+			throw new Meteor.Error('not-authorized');
 		}
 
 		Inventories.update({_id: itemId}, {$set: {amount: amount}});
