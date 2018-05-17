@@ -4,6 +4,7 @@ import { Accounts } from 'meteor/accounts-base';
 import '../imports/api/groceries';
 import '../imports/api/grocerylists';
 import '../imports/api/inventories';
+import '../imports/api/inventorylists';
 import '../imports/api/recipes';
 
 Meteor.startup(() => {

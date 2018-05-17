@@ -19,10 +19,10 @@ Meteor.methods({
 		}
 
 		if (name.length === 0) {
-			throw new Meteor.Error('name cannot be empty')
+			throw new Meteor.Error('Name cannot be empty')
 		}
 
-		Inventories.insert({
+		return Inventories.insert({
 			name: name,
 			owner: this.userId,
 			createdAt: new Date(),
@@ -41,7 +41,12 @@ Meteor.methods({
 		}
 
 		if (amount.length === 0) {
-			throw new Meteor.Error('amount cannot be empty')
+			throw new Meteor.Error('Amount cannot be empty')
+		}
+
+		let inventory = Inventories.findOne(itemId);
+		if (inventory.owner !== this.userId) {
+			throw new Meteor.Error('not-authorized');
 		}
 
 		Inventories.update({_id: itemId}, {$set: {amount: amount}});
