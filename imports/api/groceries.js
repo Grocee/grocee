@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
+
+import { authCheck } from '../../utils/authorization';
  
 export const Groceries = new Mongo.Collection('groceries');
 
@@ -9,10 +11,8 @@ Meteor.publish('groceries', function() {
 });
 
 Meteor.methods({
-	'groceries.insert'(name, amount, grocerylistId) {
+	'groceries.insert'(name, amount) {
 		check(name, String);
-		check(amount, String);
-		check(grocerylistId, String);
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
@@ -22,45 +22,53 @@ Meteor.methods({
 		if (name.length === 0) {
 			throw new Meteor.Error('name cannot be empty')
 		}
-
-		if (amount.length === 0) {
-			throw new Meteor.Error('amount cannot be empty')
-		}
 		
-		Groceries.insert({
+		return Groceries.insert({
 			name,
 			amount,
-			grocerylistId,
 			owner: this.userId,
 			createdAt: new Date(),
 		});
 	},
 	'groceries.remove'(groceryId) {
 		check(groceryId, String);
-
-		// Make sure only the owner can delete
-		const grocery = Groceries.findOne(groceryId);
-		if (grocery.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
+		authCheck(Groceries, this.userId, groceryId);
 
 		Groceries.remove(groceryId);
-	},
-	'groceries.moveList'(groceryId, grocerylistId) {
-		check(groceryId, String);
-		check(grocerylistId, String);
-
-		Groceries.update({groceryId}, {$set: {grocerylistId}});
 	},
 	'groceries.setChecked'(groceryId, setChecked) {
 		check(groceryId, String);
 		check(setChecked, Boolean);
-
-		const grocery = Groceries.findOne(groceryId);
-		if (grocery.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
+		authCheck(Groceries, this.userId, groceryId);
 
 		Groceries.update(groceryId, { $set: { checked: setChecked } });
 	},
+	'groceries.updateName'(groceryId, name) {
+		check(groceryId, String);
+		check(name, String);
+		authCheck(Groceries, this.userId, groceryId);
+
+		try {
+			Groceries.updateOne(
+				{ _id: groceryId },
+				{ $set: { name } }
+			);
+		} catch (e) {
+			// TODO
+		}
+	},
+	'groceries.updateAmount'(groceryId, amount) {
+		check(groceryId, String);
+		check(amount, String);
+		authCheck(Groceries, this.userId, groceryId);
+
+		try {
+			Groceries.updateOne(
+				{ _id: groceryId },
+				{ $set: { name } }
+			);
+		} catch (e) {
+			// TODO
+		}
+	}
 });
