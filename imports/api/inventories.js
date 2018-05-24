@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
- 
+import { authCheck } from '../../utils/authorization';
+
 export const Inventories = new Mongo.Collection('inventories');
 
 // If use arrow function this.userId will return undefined
@@ -27,6 +28,7 @@ Meteor.methods({
 			owner: this.userId,
 			createdAt: new Date(),
 		});
+
 	},
 	'inventories.updateAmount'(itemId, amount) {
 		check(itemId, String);
@@ -44,22 +46,12 @@ Meteor.methods({
 			throw new Meteor.Error('Amount cannot be empty')
 		}
 
-		let inventory = Inventories.findOne(itemId);
-		if (inventory.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
-
+		authCheck(Inventories, this.userId, itemId);
 		Inventories.update({_id: itemId}, {$set: {amount: amount}});
-
 	},
 	'inventories.remove'(itemId) {
 		check(itemId, String);
-
-		const inventory = Inventories.findOne(itemId);
-		if (inventory.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
-
+		authCheck(Inventories, this.userId, itemId);
 		Inventories.remove(itemId);
 	},
 });
