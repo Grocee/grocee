@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import { Inventories } from './inventories';
+import { authCheck } from '../../utils/authorization';
 
 export const InventoryLists = new Mongo.Collection('inventorylists');
 
@@ -30,36 +31,23 @@ Meteor.methods({
 	},
 	'inventorylists.remove'(listId) {
 		check(listId, String);
-
-		// Make sure only the owner can remove
-		const list = InventoryLists.findOne(listId);
-		if (list.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
+		authCheck(InventoryLists, this.userId, listId);
 
 		InventoryLists.remove(listId);
 	},
 	'inventorylists.addItem'(listId, itemId) {
 		check(listId, String);
 		check(itemId, String);
-
-		// only owner can add item to list
-		const list = InventoryLists.findOne(listId);
-		if (list.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
-
+		authCheck(InventoryLists, this.userId, listId);
+		
 		// check if item exists
 		const item = Inventories.findOne(itemId);
 		if (!item) {
 			throw new Meteor.Error('Item does not exist')
 		}
 
-		if (item.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
+		authCheck(Inventories, this.userId, itemId);
 
-		// push method to add to list
 		InventoryLists.update(listId, { $push: { items: itemId } })
 	}
 })
