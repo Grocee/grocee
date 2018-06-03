@@ -49,5 +49,20 @@ Meteor.methods({
 		authCheck(Inventories, this.userId, itemId);
 
 		InventoryLists.update(listId, { $push: { items: itemId } })
+	},
+	'inventorylists.removeItem'(listId, itemId) {
+		check(listId, String);
+		check(itemId, String);
+
+		const list = InventoryLists.findOne(listId);
+		if (!list) {
+			throw new Meteor.Error('List does not exist')
+		}
+
+		authCheck(InventoryLists, this.userId, listId);
+
+		const items = list.items.filter(item => item !== itemId);
+
+		InventoryLists.update(listId, { $set: { items }});
 	}
 })
