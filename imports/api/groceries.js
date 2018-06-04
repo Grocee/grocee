@@ -34,41 +34,33 @@ Meteor.methods({
 		check(groceryId, String);
 		authCheck(Groceries, this.userId, groceryId);
 
-		Groceries.remove(groceryId);
+		return Groceries.remove(groceryId);
 	},
 	'groceries.setChecked'(groceryId, setChecked) {
 		check(groceryId, String);
 		check(setChecked, Boolean);
 		authCheck(Groceries, this.userId, groceryId);
 
-		Groceries.update(groceryId, { $set: { checked: setChecked } });
+		return Groceries.update(groceryId, {
+			$set: { checked: setChecked }
+		});
 	},
 	'groceries.updateName'(groceryId, name) {
 		check(groceryId, String);
 		check(name, String);
 		authCheck(Groceries, this.userId, groceryId);
 
-		try {
-			Groceries.updateOne(
-				{ _id: groceryId },
-				{ $set: { name } }
-			);
-		} catch (e) {
-			// TODO
-		}
+		return Groceries.update({ _id: groceryId }, {
+			$set: { name }
+		});
 	},
 	'groceries.updateAmount'(groceryId, amount) {
 		check(groceryId, String);
 		check(amount, String);
 		authCheck(Groceries, this.userId, groceryId);
 
-		try {
-			Groceries.updateOne(
-				{ _id: groceryId },
-				{ $set: { name } }
-			);
-		} catch (e) {
-			// TODO
-		}
+		return Groceries.update({ _id: groceryId }, {
+			$set: { amount }
+		});
 	}
 });
