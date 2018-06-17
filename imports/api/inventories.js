@@ -44,7 +44,6 @@ Meteor.methods({
 	},
 	'inventories.updateAmount'(itemId, amount) {
 		check(itemId, String);
-		check(amount, String);
 
 		if (!this.userId) {
 			throw new Meteor.Error('not-authorized');
@@ -52,10 +51,6 @@ Meteor.methods({
 
 		if (itemId.length === 0) {
 			throw new Meteor.Error('itemId cannot be empty')
-		}
-
-		if (amount.length === 0) {
-			throw new Meteor.Error('Amount cannot be empty')
 		}
 
 		authCheck(Inventories, this.userId, itemId);
