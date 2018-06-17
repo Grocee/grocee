@@ -30,6 +30,18 @@ Meteor.methods({
 		});
 
 	},
+	'inventories.updateName'(itemId, newName) {
+		check(itemId, String);
+		check(newName, String);
+
+		if (newName.length === 0) {
+			throw new Meteor.Error('Name cannot be empty')
+		}
+
+		authCheck(Inventories, this.userId, itemId);
+
+		Inventories.update({_id: itemId}, {$set: {name: newName}});
+	},
 	'inventories.updateAmount'(itemId, amount) {
 		check(itemId, String);
 		check(amount, String);
