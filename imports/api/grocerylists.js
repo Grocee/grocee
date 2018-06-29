@@ -38,7 +38,7 @@ Meteor.methods({
 
 		const items = groceryList.items;
 		items.push(groceryItemId);
-		GroceryLists.update(groceryListId, { $set: { items }});
+		return GroceryLists.update(groceryListId, { $set: { items }});
 	},
 	'grocerylists.remove'(groceryListId) {
 		check(groceryListId, String);
@@ -49,7 +49,7 @@ Meteor.methods({
 			throw new Meteor.Error('not-authorized');
 		}
 
-		GroceryLists.remove(groceryListId);
+		return GroceryLists.remove(groceryListId);
 	},
 	'grocerylists.removeItem'(groceryListId, groceryItemId) {
 		check(groceryListId, String);
@@ -63,7 +63,7 @@ Meteor.methods({
         
 		const items = groceryList.items.filter(groceryItem => groceryItem !== groceryItemId);
         
-		GroceryLists.update(groceryListId, { $set: { items }});
+		return GroceryLists.update(groceryListId, { $set: { items }});
 	}
 });
 
