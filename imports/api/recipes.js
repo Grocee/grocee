@@ -13,6 +13,8 @@ Meteor.methods({
 	'recipes.insert'(name, url) {
 		check(name, String);
 		check(url, String);
+		name = name.trim();
+		url = url.trim();
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
