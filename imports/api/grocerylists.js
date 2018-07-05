@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 
+import { authCheck } from '../../utils/authorization';
+
 export const GroceryLists = new Mongo.Collection('grocerylists');
 
 Meteor.publish('grocerylists', function() {
@@ -31,40 +33,31 @@ Meteor.methods({
 	'grocerylists.addItem'(groceryListId, groceryItemId) {
 		check(groceryListId, String);
 		check(groceryItemId, String);
+		authCheck(GroceryLists, this.userId, groceryListId);
 
 		const groceryList = GroceryLists.findOne(groceryListId);
-		if ( groceryList.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
-
 		const items = groceryList.items;
 		items.push(groceryItemId);
+
 		return GroceryLists.update(groceryListId, { $set: { items }});
 	},
 	'grocerylists.remove'(groceryListId) {
 		check(groceryListId, String);
-        
-		// Make sure only the owner can delete
-		const groceryList = GroceryLists.findOne(groceryListId);
-		if (groceryList.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
-
+		authCheck(GroceryLists, this.userId, groceryListId);
+		
 		return GroceryLists.remove(groceryListId);
 	},
 	'grocerylists.removeItem'(groceryListId, groceryItemId) {
 		check(groceryListId, String);
 		check(groceryItemId, String);
+		authCheck(GroceryLists, this.userId, groceryListId);
 
-		// Make sure only the owner can delete
 		const groceryList = GroceryLists.findOne(groceryListId);
-		if (groceryList.owner !== this.userId) {
-			throw new Meteor.Error('not-authorized');
-		}
-        
 		const items = groceryList.items.filter(groceryItem => groceryItem !== groceryItemId);
         
-		return GroceryLists.update(groceryListId, { $set: { items }});
+		return GroceryLists.update(groceryListId,{
+			$set: { items }
+		});
 	}
 });
 
