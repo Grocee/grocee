@@ -13,7 +13,8 @@ Meteor.publish('inventorylists', function() {
 Meteor.methods({
 	'inventorylists.create'(name) {
 		check(name, String);
-
+		name = name.trim();
+		
 		if (!this.userId) {
 			throw new Meteor.Error('not-authorized');
 		}
