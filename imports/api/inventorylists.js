@@ -13,8 +13,7 @@ Meteor.publish('inventorylists', function() {
 Meteor.methods({
 	'inventorylists.create'(name) {
 		check(name, String);
-		name = name.trim();
-		
+
 		if (!this.userId) {
 			throw new Meteor.Error('not-authorized');
 		}
@@ -24,7 +23,7 @@ Meteor.methods({
 		}
 
 		return InventoryLists.insert({
-			name,
+			name: name.trim(),
 			owner: this.userId,
 			items: [],
 			createdAt: new Date()

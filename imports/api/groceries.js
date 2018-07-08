@@ -13,8 +13,6 @@ Meteor.publish('groceries', function() {
 Meteor.methods({
 	'groceries.insert'(name, amount) {
 		check(name, String);
-		name = name.trim();
-		amount = amount.trim();
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
@@ -26,8 +24,8 @@ Meteor.methods({
 		}
 		
 		return Groceries.insert({
-			name,
-			amount,
+			name: name.trim(),
+			amount: amount.trim(),
 			owner: this.userId,
 			createdAt: new Date(),
 		});
@@ -51,20 +49,18 @@ Meteor.methods({
 		check(groceryId, String);
 		check(name, String);
 		authCheck(Groceries, this.userId, groceryId);
-		name = name.trim();
 
 		return Groceries.update({ _id: groceryId }, {
-			$set: { name }
+			$set: { name: name.trim() }
 		});
 	},
 	'groceries.updateAmount'(groceryId, amount) {
 		check(groceryId, String);
 		check(amount, String);
 		authCheck(Groceries, this.userId, groceryId);
-		amount = amount.trim();
 
 		return Groceries.update({ _id: groceryId }, {
-			$set: { amount }
+			$set: { amount: amount.trim() }
 		});
 	}
 });
