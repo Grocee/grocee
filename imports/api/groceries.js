@@ -28,6 +28,8 @@ Meteor.methods({
 		return Groceries.insert({
 			name,
 			amount,
+			checked: false,
+			archived: false,
 			owner: this.userId,
 			createdAt: new Date(),
 		});
@@ -37,6 +39,14 @@ Meteor.methods({
 		authCheck(Groceries, this.userId, groceryId);
 
 		return Groceries.remove(groceryId);
+	},
+	'groceries.archive'(groceryId) {
+		check(groceryId, String);
+		authCheck(Groceries, this.userId, groceryId);
+
+		return Groceries.update(groceryId, {
+			$set: { archived: true }
+		});
 	},
 	'groceries.setChecked'(groceryId, setChecked) {
 		check(groceryId, String);
