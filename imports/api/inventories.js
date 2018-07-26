@@ -13,7 +13,7 @@ Meteor.publish('inventories', function() {
 Meteor.methods({
 	'inventories.insert'(name) {
 		check(name, String);
-		name = name.trim();
+
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
 			throw new Meteor.Error('not-authorized');
@@ -24,7 +24,7 @@ Meteor.methods({
 		}
 
 		return Inventories.insert({
-			name: name,
+			name: name.trim(),
 			owner: this.userId,
 			createdAt: new Date(),
 		});
@@ -33,7 +33,6 @@ Meteor.methods({
 	'inventories.updateName'(itemId, newName) {
 		check(itemId, String);
 		check(newName, String);
-		newName = newName.trim();
 
 		if (newName.length === 0) {
 			throw new Meteor.Error('Name cannot be empty')
@@ -41,12 +40,11 @@ Meteor.methods({
 
 		authCheck(Inventories, this.userId, itemId);
 
-		Inventories.update({_id: itemId}, {$set: {name: newName}});
+		Inventories.update({ _id: itemId }, { $set: { name: newName.trim() }});
 	},
 	'inventories.updateAmount'(itemId, amount) {
 		check(itemId, String);
-		amount = amount.trim();
-		
+
 		if (!this.userId) {
 			throw new Meteor.Error('not-authorized');
 		}
@@ -56,7 +54,7 @@ Meteor.methods({
 		}
 
 		authCheck(Inventories, this.userId, itemId);
-		Inventories.update({_id: itemId}, {$set: {amount: amount}});
+		Inventories.update({ _id: itemId }, { $set: { amount: amount.trim() }});
 	},
 	'inventories.remove'(itemId) {
 		check(itemId, String);

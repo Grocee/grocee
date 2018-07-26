@@ -13,8 +13,6 @@ Meteor.methods({
 	'recipes.insert'(name, url) {
 		check(name, String);
 		check(url, String);
-		name = name.trim();
-		url = url.trim();
 
 		// Make sure the user is logged in before inserting
 		if (!this.userId) {
@@ -30,8 +28,8 @@ Meteor.methods({
 		}
 
 		Recipes.insert({
-			name: name,
-			url: url,
+			name: name.trim(),
+			url: url.trim(),
 			owner: this.userId,
 			createdAt: new Date(),
 		});

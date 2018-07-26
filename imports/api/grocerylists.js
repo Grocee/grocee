@@ -13,8 +13,7 @@ Meteor.publish('grocerylists', function() {
 Meteor.methods({
 	'grocerylists.create'(name) {
 		check(name, String);
-		name = name.trim();
-		
+
 		if (!this.userId) {
 			throw new Meteor.Error('not-authorized');
 		}
@@ -24,7 +23,7 @@ Meteor.methods({
 		}
 		
 		return GroceryLists.insert({
-			name,
+			name: name.trim(),
 			owner: this.userId,
 			createdAt: new Date(),
 			items: []
