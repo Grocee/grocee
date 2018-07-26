@@ -64,5 +64,17 @@ Meteor.methods({
 		const items = list.items.filter(item => item !== itemId);
 
 		InventoryLists.update(listId, { $set: { items }});
-	}
+	},
+	'inventorylists.setDefault'(listId, isDefault) {
+		check(listId, String);
+
+		const list = InventoryLists.findOne(listId);
+		if (!list) {
+			throw new Meteor.Error('List does not exist')
+		}
+
+		authCheck(InventoryLists, this.userId, listId);
+
+		InventoryLists.update(listId, { $set: { isDefault: isDefault }});
+	},
 })
