@@ -65,7 +65,7 @@ Meteor.methods({
 
 		InventoryLists.update(listId, { $set: { items }});
 	},
-	'inventorylists.setDefault'(listId, isDefault) {
+	'inventorylists.setDefault'(listId) {
 		check(listId, String);
 
 		const list = InventoryLists.findOne(listId);
@@ -75,6 +75,13 @@ Meteor.methods({
 
 		authCheck(InventoryLists, this.userId, listId);
 
-		InventoryLists.update(listId, { $set: { isDefault: isDefault }});
+		// find list(s) that might be set as default
+		let lists = InventoryLists.find({ isDefault: true });
+
+		lists.forEach(function (list) {
+			InventoryLists.update(list._id, { $set: { isDefault: false }});
+		});
+
+		InventoryLists.update(listId, { $set: { isDefault: true }});
 	},
-})
+});
