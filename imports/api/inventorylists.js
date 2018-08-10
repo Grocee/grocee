@@ -75,7 +75,7 @@ Meteor.methods({
 
 		authCheck(InventoryLists, this.userId, listId);
 
-		// find list(s) that might be set as default
+		// find lists that might be set as default
 		let lists = InventoryLists.find({ isDefault: true });
 
 		lists.forEach(function (list) {
