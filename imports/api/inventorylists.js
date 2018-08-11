@@ -13,8 +13,7 @@ Meteor.publish('inventorylists', function() {
 Meteor.methods({
 	'inventorylists.create'(name) {
 		check(name, String);
-		name = name.trim();
-		
+
 		if (!this.userId) {
 			throw new Meteor.Error('not-authorized');
 		}
@@ -24,7 +23,7 @@ Meteor.methods({
 		}
 
 		return InventoryLists.insert({
-			name,
+			name: name.trim(),
 			owner: this.userId,
 			items: [],
 			createdAt: new Date()
@@ -65,5 +64,24 @@ Meteor.methods({
 		const items = list.items.filter(item => item !== itemId);
 
 		InventoryLists.update(listId, { $set: { items }});
-	}
-})
+	},
+	'inventorylists.setDefault'(listId) {
+		check(listId, String);
+
+		const list = InventoryLists.findOne(listId);
+		if (!list) {
+			throw new Meteor.Error('List does not exist')
+		}
+
+		authCheck(InventoryLists, this.userId, listId);
+
+		// find lists that might be set as default
+		let lists = InventoryLists.find({ isDefault: true });
+
+		lists.forEach(function (list) {
+			InventoryLists.update(list._id, { $set: { isDefault: false }});
+		});
+
+		InventoryLists.update(listId, { $set: { isDefault: true }});
+	},
+});
