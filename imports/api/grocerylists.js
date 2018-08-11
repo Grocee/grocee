@@ -54,11 +54,29 @@ Meteor.methods({
 		const groceryList = GroceryLists.findOne(groceryListId);
 		const items = groceryList.items.filter(groceryItem => groceryItem !== groceryItemId);
         
-		return GroceryLists.update(groceryListId,{
+		return GroceryLists.update(groceryListId, {
+			$set: { items }
+		});
+	},
+	'grocerylists.moveItem'(groceryItemId, currentGroceryListId, newGroceryListId) {
+		check(groceryItemId, String);
+		check(currentGroceryListId, String);
+		check(newGroceryListId, String);
+		authCheck(GroceryLists, this.userId, currentGroceryListId);
+		authCheck(GroceryLists, this.userId, newGroceryListId);
+
+		// Remove from existing grocery list first
+		const currentGroceryList = GroceryLists.findOne(currentGroceryListId);
+		const currentGroceryListItems = currentGroceryList.items.filter(groceryItem => groceryItem !== groceryItemId);
+		GroceryLists.update(currentGroceryListId, {
+			$set: { items: currentGroceryListItems }
+		});
+
+		const groceryList = GroceryLists.findOne(newGroceryListId);
+		const items = groceryList.items;
+		items.push(groceryItemId);
+		return GroceryLists.update(newGroceryListId, {
 			$set: { items }
 		});
 	}
 });
-
-// TODO move item to new list
-// TODO add validation
