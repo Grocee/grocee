@@ -38,12 +38,12 @@ Meteor.methods({
 
 		return Groceries.remove(groceryId);
 	},
-	'groceries.archive'(groceryId) {
+	'groceries.archive'(groceryId, archived = true) {
 		check(groceryId, String);
 		authCheck(Groceries, this.userId, groceryId);
 
 		return Groceries.update(groceryId, {
-			$set: { archived: true }
+			$set: { archived }
 		});
 	},
 	'groceries.setChecked'(groceryId, setChecked) {
