@@ -23,14 +23,18 @@ Meteor.methods({
 			throw new Meteor.Error('name cannot be empty')
 		}
 		
-		return Groceries.insert({
+		const newGrocery = {
 			name: name.trim(),
-			amount: amount.trim(),
 			checked: false,
 			archived: false,
 			owner: this.userId,
 			createdAt: new Date(),
-		});
+		};
+		if (amount && amount !== "") {
+			newGrocery.amount = amount.trim();
+		}
+
+		return Groceries.insert(newGrocery);
 	},
 	'groceries.remove'(groceryId) {
 		check(groceryId, String);

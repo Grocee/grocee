@@ -36,9 +36,13 @@ Meteor.methods({
 
 		const groceryList = GroceryLists.findOne(groceryListId);
 		const items = groceryList.items;
-		items.push(groceryItemId);
-
-		return GroceryLists.update(groceryListId, { $set: { items }});
+		const alreadyExists = items.find(item => item === groceryItemId);
+		if (!alreadyExists) {
+			items.push(groceryItemId);
+			return GroceryLists.update(groceryListId, { $set: { items }});
+		} else {
+			throw new Meteor.Error(`Grocery Item with ID ${groceryItemId} already exists in Grocery List with ID ${groceryListId}`);
+		}
 	},
 	'grocerylists.remove'(groceryListId) {
 		check(groceryListId, String);
