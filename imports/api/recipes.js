@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
+import { authCheck } from '../../utils/authorization';
  
 export const Recipes = new Mongo.Collection('recipes');
 
@@ -45,4 +46,24 @@ Meteor.methods({
 
 		Recipes.remove(recipeId);
 	},
+	'recipes.archive'(recipeId, archived = true) {
+		check(recipeId, String);
+		authCheck(Recipes, this.userId, recipeId);
+
+		return Recipes.update(recipeId, {
+			$set: { archived }
+		});
+	},
+	'recipes.update'(recipeId, name, url) {
+		check(recipeId, String);
+		check(name, String);
+		check(url, String);
+
+		authCheck(Recipes, this.userId, recipeId);
+
+		return Recipes.update({ _id: recipeId }, {
+			$set: { name: name.trim(), url: url.trim() }
+		})
+
+	}
 });
