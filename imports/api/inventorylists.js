@@ -35,6 +35,23 @@ Meteor.methods({
 
 		InventoryLists.remove(listId);
 	},
+	'inventorylists.archive'(listId, archived = true) {
+		check(listId, String);
+		authCheck(InventoryLists, this.userId, listId);
+
+		const list = InventoryLists.findOne(listId);
+
+		InventoryLists.update(listId, {
+			$set: { archived }
+		});
+
+		list.items.forEach((itemId) => {
+			Inventories.update(itemId, {
+				$set: { archived }
+			});
+		});
+
+	},
 	'inventorylists.addItem'(listId, itemId) {
 		check(listId, String);
 		check(itemId, String);
