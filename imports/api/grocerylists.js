@@ -44,6 +44,20 @@ Meteor.methods({
 			throw new Meteor.Error(`Grocery Item with ID ${groceryItemId} already exists in Grocery List with ID ${groceryListId}`);
 		}
 	},
+	'grocerylists.updateName'(groceryListId, newName) {
+		check(groceryListId, String);
+		check(newName, String);
+
+		const trimmedName = newName.trim();
+		if (trimmedName.length === 0) {
+			throw new Meteor.Error('name cannot be empty');
+		}
+		authCheck(GroceryLists, this.userId, groceryListId);
+
+		return GroceryLists.update({ _id: groceryListId }, {
+			$set: { name: trimmedName }
+		});
+	},
 	'grocerylists.remove'(groceryListId) {
 		check(groceryListId, String);
 		authCheck(GroceryLists, this.userId, groceryListId);
