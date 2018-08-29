@@ -38,8 +38,12 @@ Meteor.methods({
 
 		InventoryLists.update(listId, { $push: { items: newItem } });
 	},
-	'inventories.update'(itemId, name, amount) {
+	'inventories.update'(itemId, name, amount = '') {
 		check(itemId, String);
+
+		if (itemId.length === 0) {
+			throw new Meteor.Error('itemId cannot be empty')
+		}
 
 		if (name.length === 0) {
 			throw new Meteor.Error('Name cannot be empty')
