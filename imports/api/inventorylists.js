@@ -29,12 +29,6 @@ Meteor.methods({
 			createdAt: new Date()
 		})
 	},
-	'inventorylists.remove'(listId) {
-		check(listId, String);
-		authCheck(InventoryLists, this.userId, listId);
-
-		InventoryLists.remove(listId);
-	},
 	'inventorylists.archive'(listId, archived = true) {
 		check(listId, String);
 		authCheck(InventoryLists, this.userId, listId);

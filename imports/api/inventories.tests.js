@@ -153,7 +153,7 @@ describe('inventories.update', function () {
 	})
 });
 
-describe('inventories.remove', function () {
+describe('inventories.archive', function () {
 	const userId = Random.id();
 	let itemId;
 
@@ -166,21 +166,21 @@ describe('inventories.remove', function () {
 		});
 	});
 
-	it('can remove an inventory item', function () {
+	it('can archive an inventory item', function () {
 
-		const removeItem = Meteor.server.method_handlers['inventories.remove'];
+		const removeItem = Meteor.server.method_handlers['inventories.archive'];
 		const invocation = { userId };
 
 		removeItem.apply(invocation, [itemId]);
 
-		chai.assert.equal(Inventories.find().count(), 0);
+		chai.assert.isTrue(Inventories.findOne({ _id: itemId }).archived);
 	});
 
-	it('cannot remove others inventory item', function () {
+	it('cannot archive others inventory item', function () {
 
 		chai.assert.throws(function () {
 
-			const removeItem = Meteor.server.method_handlers['inventories.remove'];
+			const removeItem = Meteor.server.method_handlers['inventories.archive'];
 			const invocation = { userId: 'blah' };
 
 			removeItem.apply(invocation, [itemId]);

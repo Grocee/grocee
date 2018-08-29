@@ -58,11 +58,6 @@ Meteor.methods({
 			}
 		});
 	},
-	'inventories.remove'(itemId) {
-		check(itemId, String);
-		authCheck(Inventories, this.userId, itemId);
-		Inventories.remove(itemId);
-	},
 	'inventories.archive'(itemId, archived = true) {
 		check(itemId, String);
 		authCheck(Inventories, this.userId, itemId);
