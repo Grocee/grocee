@@ -90,6 +90,40 @@ describe('grocerylists.addItem', () => {
 	});
 });
 
+describe('grocerylists.updateName', () => {
+	const userId = Random.id();
+	let groceryListId;
+	const groceryItemId = "abcd1234";
+	const newGroceryListName = "Vegetables";
+
+	const updateName = Meteor.server.method_handlers['grocerylists.updateName'];
+	const invocation = { userId };
+
+	beforeEach(() => {
+		GroceryLists.remove({});
+		groceryListId = GroceryLists.insert({
+			name: 'Fruits',
+			owner: userId,
+			createdAt: new Date(),
+			items: [groceryItemId]
+		});
+	});
+
+	it('can update name of owned grocery list', () => {
+		updateName.apply(invocation, [groceryListId, newGroceryListName]);
+		const groceryList = GroceryLists.findOne(groceryListId);
+		assert.equal(groceryList.name, newGroceryListName);
+	});
+
+	["", 2, null].forEach(newName => {
+		it('new list name must be a non-empty string', () => {
+			assert.throws(() => {
+				updateName.apply(invocation, [groceryListId, newName]);
+			});
+		});
+	});
+});
+
 describe('grocerylists.remove', () => {
 	const userId = Random.id();
 	let groceryListId;
@@ -133,7 +167,6 @@ describe('grocerylists.remove', () => {
 	});
 });
 
-// 'grocerylists.removeItem'(groceryListId, groceryItemId)
 describe('grocerylists.removeItem', () => {
 	const userId = Random.id();
 	let groceryListId;
