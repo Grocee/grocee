@@ -38,7 +38,7 @@ Meteor.methods({
 
 		InventoryLists.update(listId, { $push: { items: newItem } });
 	},
-	'inventories.update'(itemId, name, amount = '') {
+	'inventories.update'(itemId, name, amount = null) {
 		check(itemId, String);
 
 		if (itemId.length === 0) {
@@ -51,10 +51,14 @@ Meteor.methods({
 
 		authCheck(Inventories, this.userId, itemId);
 
+		if (amount != null) {
+			amount = amount.trim();
+		}
+
 		Inventories.update(itemId, {
 			$set: {
 				name: name.trim(),
-				amount: amount.trim().length === 0 ? null : amount.trim()
+				amount
 			}
 		});
 	},
