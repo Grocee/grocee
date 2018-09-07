@@ -30,7 +30,7 @@ describe('inventorylists.create', function () {
 	})
 });
 
-describe('inventorylists.remove', function () {
+describe('inventorylists.archive', function () {
 	const userId = Random.id();
 	let listId;
 
@@ -38,28 +38,59 @@ describe('inventorylists.remove', function () {
 		InventoryLists.remove({});
 		listId = InventoryLists.insert({
 			name: 'Stuff',
-			owner: userId
+			owner: userId,
+			items: []
 		});
 	});
 
-	it('can delete owned inventory list', function () {
-		const deleteInventoryList = Meteor.server.method_handlers['inventorylists.remove'];
+	it('can archive owned inventory list', function () {
+		const deleteInventoryList = Meteor.server.method_handlers['inventorylists.archive'];
 		const invocation = { userId };
 
 		deleteInventoryList.apply(invocation, [listId]);
 
-		chai.assert.equal(InventoryLists.find().count(), 0);
+		chai.assert.isTrue(InventoryLists.findOne({ _id: listId }).archived);
 	});
 
-	it('cannot delete others inventory list', function () {
+	it('cannot archive others inventory list', function () {
 
 		chai.assert.throws(function () {
-			const deleteInventoryList = Meteor.server.method_handlers['inventorylists.remove'];
+			const deleteInventoryList = Meteor.server.method_handlers['inventorylists.archive'];
 			const invocation = { userId: '123' };
 
 			deleteInventoryList.apply(invocation, [listId]);
-		}, Meteor.Error, /not-authorized/);
+		}, Meteor.Error, 'not-authorized');
 
+	});
+
+	it('can archive each inventory item belonging to the list', function () {
+		const deleteInventoryList = Meteor.server.method_handlers['inventorylists.archive'];
+		const invocation = { userId };
+
+		let itemId1 = Inventories.insert({
+			name: 'First Item',
+			amount: '1 lb',
+			archived: false,
+			owner: userId
+		});
+
+		let itemId2 = Inventories.insert({
+			name: 'Second Item',
+			amount: '1 lb',
+			archived: false,
+			owner: userId
+		});
+
+		InventoryLists.update(listId, { $set: { items: [itemId1, itemId2] } });
+
+		deleteInventoryList.apply(invocation, [listId]);
+
+		let list = InventoryLists.findOne({ _id: listId });
+		chai.assert.isTrue(list.archived);
+
+		list.items.forEach((itemId) => {
+			chai.assert.isTrue(Inventories.findOne({ _id: itemId }).archived);
+		})
 	});
 });
 
