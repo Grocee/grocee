@@ -254,3 +254,54 @@ describe('inventorylists.setDefault', function () {
 	})
 
 });
+
+describe('inventorylists.moveItem', function () {
+	const userId = Random.id();
+	let currentListId;
+	let newListId;
+	let itemId;
+
+	beforeEach(function () {
+		InventoryLists.remove({});
+
+		itemId = Inventories.insert({
+			name: 'Item',
+			amount: '1 lb',
+			owner: userId
+		});
+
+		currentListId = InventoryLists.insert({
+			name: 'Current List',
+			owner: userId,
+			items: [itemId]
+		});
+
+		newListId = InventoryLists.insert({
+			name: 'New List',
+			owner: userId,
+			items: []
+		});
+	});
+
+	it('can move item to a different list', function () {
+
+		Inventories.update(itemId, {
+			$set: { listId: currentListId }
+		});
+
+		const moveItem =  Meteor.server.method_handlers['inventorylists.moveItem'];
+		const invocation = { userId };
+
+		moveItem.apply(invocation, [itemId, currentListId, newListId]);
+
+		const oldList = InventoryLists.findOne({ _id: currentListId });
+		chai.assert.deepEqual(oldList.items.length, 0);
+
+		const newList = InventoryLists.findOne({ _id: newListId });
+		chai.assert.deepEqual(newList.items, [itemId]);
+
+		const item = Inventories.findOne({ _id: itemId });
+		chai.assert.equal(item.listId, newListId);
+	});
+
+});
