@@ -3,6 +3,8 @@ import { Random } from 'meteor/random';
 import { assert } from 'chai';
  
 import { Groceries } from '/imports/api/groceries';
+import { Inventories } from '/imports/api/inventories';
+import { InventoryLists } from '/imports/api/inventorylists';
 
 describe('groceries.insert', () => {
 	const userId = Random.id();
@@ -90,7 +92,6 @@ describe('groceries.remove', () => {
 	});
 });
 
-// 'groceries.archive'(groceryId, archived = true)
 describe('groceries.archive', () => {
 	const userId = Random.id();
 	let groceryId;
@@ -165,9 +166,13 @@ describe('groceries.archive', () => {
 describe('groceries.setChecked', () => {
 	const userId = Random.id();
 	let groceryId;
+	let inventoryListId;
 
 	beforeEach(() => {
 		Groceries.remove({});
+		Inventories.remove({});
+		InventoryLists.remove({});
+
 		groceryId = Groceries.insert({
 			name: 'Jasmine Rice',
 			amount: '25 lbs',
@@ -177,17 +182,34 @@ describe('groceries.setChecked', () => {
 			archived: false,
 			checked: false
 		});
+
+		inventoryListId = InventoryLists.insert({
+			name: 'Food',
+			isDefault: true,
+			items: []
+		});
 	});
 
-	[true, false].forEach((setChecked) => {
-		it(`can set checked property to ${setChecked}`, () => {
-			const setCheckedGrocery = Meteor.server.method_handlers['groceries.setChecked'];
-			const invocation = { userId };
-	
-			setCheckedGrocery.apply(invocation, [groceryId, setChecked]);
-			const grocery = Groceries.findOne(groceryId);
-			assert.equal(grocery.checked, setChecked);
-		});
+	it('can set checked property to false', () => {
+		const setCheckedGrocery = Meteor.server.method_handlers['groceries.setChecked'];
+		const invocation = { userId };
+
+		setCheckedGrocery.apply(invocation, [groceryId, false]);
+		const grocery = Groceries.findOne(groceryId);
+		assert.equal(grocery.checked, false);
+	});
+
+	it('can set checked property to true', () => {
+		const setCheckedGrocery = Meteor.server.method_handlers['groceries.setChecked'];
+		const invocation = { userId };
+
+		setCheckedGrocery.apply(invocation, [groceryId, true]);
+		const grocery = Groceries.findOne(groceryId);
+		assert.equal(grocery.checked, true);
+		const inventory = Inventories.findOne({ name: 'Jasmine Rice' });
+		const inventoryList = InventoryLists.findOne(inventoryListId);
+		assert.equal(inventoryList.items.length, 1);
+		assert.deepEqual(inventoryList.items, [inventory._id]);
 	});
 
 	it('cannot modify checked property of others grocery', () => {
