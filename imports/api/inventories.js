@@ -4,12 +4,34 @@ import { check } from 'meteor/check';
 import { authCheck } from '../../utils/authorization';
 import { InventoryLists } from "./inventorylists";
 
-export const Inventories = new Mongo.Collection('inventories');
+const Inventories = new Mongo.Collection('inventories');
 
 // If use arrow function this.userId will return undefined
 Meteor.publish('inventories', function() {
 	return Inventories.find({ owner: this.userId }); //, { sort: { createdAt: -1 }});
 });
+
+const insertInventory = (name, userId, amount, listId, archived = false, callback) => {
+	if (callback) {
+		Inventories.insert({
+			name: name.trim(),
+			amount,
+			owner: userId,
+			archived,
+			listId,
+			createdAt: new Date(),
+		}, callback);
+	} else {
+		return Inventories.insert({
+			name: name.trim(),
+			amount,
+			owner: userId,
+			archived,
+			listId,
+			createdAt: new Date(),
+		});
+	}
+}
 
 Meteor.methods({
 	'inventories.insert'(name, amount, listId) {
@@ -27,15 +49,7 @@ Meteor.methods({
 
 		authCheck(InventoryLists, this.userId, listId);
 
-		const newItem = Inventories.insert({
-			name: name.trim(),
-			amount,
-			owner: this.userId,
-			archived: false,
-			listId,
-			createdAt: new Date(),
-		});
-
+		const newItem = insertInventory(name, this.userId, amount, listId, false);
 		InventoryLists.update(listId, { $push: { items: newItem } });
 	},
 	'inventories.update'(itemId, name, listId, amount = null) {
@@ -81,3 +95,5 @@ Meteor.methods({
 
 	}
 });
+
+export { Inventories, insertInventory };

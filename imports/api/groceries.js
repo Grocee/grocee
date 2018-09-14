@@ -5,6 +5,8 @@ import { check } from 'meteor/check';
 import { authCheck } from '../../utils/authorization';
  
 export const Groceries = new Mongo.Collection('groceries');
+import { insertInventory } from './inventories';
+import { addItemToList, getDefaultList } from './inventorylists';
 
 Meteor.publish('groceries', function() {
 	return Groceries.find({ owner: this.userId });
@@ -50,14 +52,30 @@ Meteor.methods({
 			$set: { archived }
 		});
 	},
-	'groceries.setChecked'(groceryId, setChecked) {
+	'groceries.setChecked'(groceryId, setChecked, addToInventory = true) {
 		check(groceryId, String);
 		check(setChecked, Boolean);
 		authCheck(Groceries, this.userId, groceryId);
 
-		return Groceries.update(groceryId, {
-			$set: { checked: setChecked }
-		});
+		if (!addToInventory) {
+			return Groceries.update(groceryId, {
+				$set: { checked: setChecked }
+			});
+		} else {
+			Groceries.update(groceryId, {
+				$set: { checked: setChecked }
+			});
+	
+			const grocery = Groceries.findOne(groceryId);
+			const defaultInventoryList = getDefaultList();
+			insertInventory(grocery.name, this.userId, grocery.amount, defaultInventoryList._id, false, (insertErr, insertedInventory) => {
+				if (insertErr) {
+					throw new Meteor.Error('Unable to create new Inventory item');
+				}
+				
+				return addItemToList(insertedInventory);
+			});
+		}
 	},
 	'groceries.updateName'(groceryId, name) {
 		check(groceryId, String);

@@ -4,11 +4,23 @@ import { check } from 'meteor/check';
 import { Inventories } from './inventories';
 import { authCheck } from '../../utils/authorization';
 
-export const InventoryLists = new Mongo.Collection('inventorylists');
+const InventoryLists = new Mongo.Collection('inventorylists');
 
 Meteor.publish('inventorylists', function() {
 	return InventoryLists.find({ owner: this.userId });
 });
+
+const addItemToList = (itemId, listId) => {
+	const listSelector = listId || { isDefault: true };
+	return InventoryLists.update(
+		listSelector,
+		{ $push: { items: itemId } }
+	);
+}
+
+const getDefaultList = () => {
+	return InventoryLists.findOne({ isDefault: true });
+}
 
 Meteor.methods({
 	'inventorylists.create'(name) {
@@ -59,7 +71,7 @@ Meteor.methods({
 
 		authCheck(Inventories, this.userId, itemId);
 
-		InventoryLists.update(listId, { $push: { items: itemId } })
+		addItemToList(itemId, listId);
 	},
 	'inventorylists.removeItem'(listId, itemId) {
 		check(listId, String);
@@ -96,3 +108,5 @@ Meteor.methods({
 		InventoryLists.update(listId, { $set: { isDefault: true }});
 	},
 });
+
+export { InventoryLists, addItemToList, getDefaultList };
