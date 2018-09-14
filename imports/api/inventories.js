@@ -69,8 +69,6 @@ Meteor.methods({
 			throw new Meteor.Error('listId cannot be empty')
 		}
 
-		console.log(`itemId: ${listId}`);
-
 		authCheck(InventoryLists, this.userId, listId);
 		authCheck(Inventories, this.userId, itemId);
 
