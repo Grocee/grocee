@@ -107,6 +107,26 @@ Meteor.methods({
 
 		InventoryLists.update(listId, { $set: { isDefault: true }});
 	},
+	'inventorylists.moveItem'(itemId, currentListId, newListId) {
+		check(itemId, String);
+		check(currentListId, String);
+		check(newListId, String);
+
+		authCheck(InventoryLists, this.userId, currentListId);
+		authCheck(InventoryLists, this.userId, newListId);
+
+		const currentList = InventoryLists.findOne(currentListId);
+		const currentListItems = currentList.items.filter(inventoryItem => inventoryItem !== itemId);
+		InventoryLists.update(currentListId, {
+			$set: { items: currentListItems }
+		});
+
+		Inventories.update(itemId, {
+			$set: { listId: newListId }
+		});
+
+		return addItemToList(itemId, newListId);
+	}
 });
 
 export { InventoryLists, addItemToList, getDefaultList };

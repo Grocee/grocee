@@ -54,6 +54,7 @@ describe('inventories.insert', function () {
 describe('inventories.update', function () {
 	const userId = Random.id();
 	let itemId;
+	let listId;
 
 	beforeEach(function() {
 		Inventories.remove({});
@@ -61,6 +62,12 @@ describe('inventories.update', function () {
 			name: 'Old Name',
 			amount: '1 lb',
 			owner: userId
+		});
+
+		listId = InventoryLists.insert({
+			name: 'A List',
+			owner: userId,
+			items: []
 		});
 	});
 
@@ -72,7 +79,7 @@ describe('inventories.update', function () {
 			const updateAmount = Meteor.server.method_handlers['inventories.update'];
 			const invocation = { userId };
 
-			updateAmount.apply(invocation, ['', 'test']);
+			updateAmount.apply(invocation, ['', 'test', listId]);
 
 		}, Meteor.Error, 'itemId cannot be empty');
 
@@ -85,7 +92,7 @@ describe('inventories.update', function () {
 			const updateAmount = Meteor.server.method_handlers['inventories.update'];
 			const invocation = { userId: '123' };
 
-			updateAmount.apply(invocation, [itemId, 'test']);
+			updateAmount.apply(invocation, [itemId, 'test', listId]);
 
 		}, Meteor.Error, 'not-authorized');
 	});
@@ -96,7 +103,7 @@ describe('inventories.update', function () {
 		const invocation = { userId };
 		const newName = 'New Name';
 
-		updateName.apply(invocation, [itemId, newName]);
+		updateName.apply(invocation, [itemId, newName, listId]);
 
 		chai.assert.equal(Inventories.findOne({ _id: itemId }).name, newName);
 	});
@@ -108,7 +115,7 @@ describe('inventories.update', function () {
 		const newName = 'New Name';
 		const newAmount = '2 tonnes';
 
-		updateName.apply(invocation, [itemId, newName, newAmount]);
+		updateName.apply(invocation, [itemId, newName, listId, newAmount]);
 
 		const item = Inventories.findOne({ _id: itemId });
 		chai.assert.equal(item.name, newName);
@@ -121,7 +128,7 @@ describe('inventories.update', function () {
 			const updateName = Meteor.server.method_handlers['inventories.update'];
 			const invocation = { userId };
 
-			updateName.apply(invocation, [itemId, '']);
+			updateName.apply(invocation, [itemId, '', listId]);
 		}, Meteor.Error, 'Name cannot be empty');
 
 	});
@@ -133,7 +140,7 @@ describe('inventories.update', function () {
 		let itemName = ' bread ';
 		let itemAmount = ' 20 lbs ';
 
-		updateName.apply(invocation, [itemId, itemName, itemAmount]);
+		updateName.apply(invocation, [itemId, itemName, listId, itemAmount]);
 
 		const item = Inventories.findOne({ _id: itemId });
 		chai.assert.equal(item.name, itemName.trim());
@@ -145,12 +152,29 @@ describe('inventories.update', function () {
 		const invocation = { userId };
 		const newName = 'New Name';
 
-		updateName.apply(invocation, [itemId, newName]);
+		updateName.apply(invocation, [itemId, newName, listId]);
 
 		const item = Inventories.findOne({ _id: itemId });
 		chai.assert.equal(item.name, newName);
 		chai.assert.isNull(item.amount);
-	})
+	});
+
+	it('can update listId', function() {
+
+		let newListId = InventoryLists.insert({
+			name: 'Stuff',
+			owner: userId,
+			items: []
+		});
+
+		const updateList = Meteor.server.method_handlers['inventories.update'];
+		const invocation = { userId };
+
+		updateList.apply(invocation, [itemId, 'Same name', newListId]);
+
+		const item = Inventories.findOne({ _id: itemId });
+		chai.assert.equal(item.listId, newListId);
+	});
 });
 
 describe('inventories.archive', function () {

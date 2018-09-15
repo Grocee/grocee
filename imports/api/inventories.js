@@ -52,8 +52,10 @@ Meteor.methods({
 		const newItem = insertInventory(name, this.userId, amount, listId, false);
 		InventoryLists.update(listId, { $push: { items: newItem } });
 	},
-	'inventories.update'(itemId, name, amount = null) {
+	'inventories.update'(itemId, name, listId, amount = null) {
 		check(itemId, String);
+		check(name, String);
+		check(listId, String);
 
 		if (itemId.length === 0) {
 			throw new Meteor.Error('itemId cannot be empty')
@@ -63,6 +65,11 @@ Meteor.methods({
 			throw new Meteor.Error('Name cannot be empty')
 		}
 
+		if (listId.length === 0) {
+			throw new Meteor.Error('listId cannot be empty')
+		}
+
+		authCheck(InventoryLists, this.userId, listId);
 		authCheck(Inventories, this.userId, itemId);
 
 		if (amount != null) {
@@ -72,7 +79,8 @@ Meteor.methods({
 		Inventories.update(itemId, {
 			$set: {
 				name: name.trim(),
-				amount
+				amount,
+				listId
 			}
 		});
 	},
