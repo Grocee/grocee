@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { Accounts } from 'meteor/accounts-base';
 
 Meteor.publish('Meteor.users.names', function () {
 	if (this.userId) {
@@ -22,5 +23,11 @@ Meteor.methods({
 				lastName: newLastName
 			}
 		});
+	},
+	'accounts.resendVerificationEmail'() {
+		Accounts.sendVerificationEmail(this.userId);
+	},
+	'accounts.sendPasswordResetEmail'() {
+		Accounts.sendResetPasswordEmail(this.userId);
 	},
 });
