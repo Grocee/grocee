@@ -16,8 +16,8 @@ Accounts.onEmailVerificationLink(function (token) {
 });
 
 Accounts.onResetPasswordLink(function (token) {
-	console.log('Resetting password...');
-	console.log('token: ' + token);
+	console.log('Resetting password...'); // eslint-disable-line
+	console.log('token: ' + token); // eslint-disable-line
 	//TODO: render reset password page, let user enter new password, then call Accounts.resetPassword
 	// https://docs.meteor.com/api/passwords.html#Accounts-resetPassword
 });
