@@ -21,3 +21,4 @@ blaze-html-templates
 meteortoys:allthings
 meteortesting:mocha
 accounts-password
+email
