@@ -305,3 +305,37 @@ describe('inventorylists.moveItem', function () {
 	});
 
 });
+
+describe('inventoryLists.updateName', () => {
+	const userId = Random.id();
+	let inventoryListId;
+	const inventoryItemId = "abcd1234";
+	const newInventoryListName = "Vegetables";
+
+	const updateName = Meteor.server.method_handlers['inventorylists.updateName'];
+	const invocation = { userId };
+
+	beforeEach(() => {
+		InventoryLists.remove({});
+		inventoryListId = InventoryLists.insert({
+			name: 'Fruits',
+			owner: userId,
+			createdAt: new Date(),
+			items: [inventoryItemId]
+		});
+	});
+
+	it('can update name of owned inventory list', () => {
+		updateName.apply(invocation, [inventoryListId, newInventoryListName]);
+		const inventoryList = InventoryLists.findOne(inventoryListId);
+		chai.assert.equal(inventoryList.name, newInventoryListName);
+	});
+
+	["", 2, null].forEach(newName => {
+		it('new list name must be a non-empty string', () => {
+			chai.assert.throws(() => {
+				updateName.apply(invocation, [inventoryListId, newName]);
+			});
+		});
+	});
+});

@@ -126,6 +126,21 @@ Meteor.methods({
 		});
 
 		return addItemToList(itemId, newListId);
+	},
+	'inventorylists.updateName'(inventoryListId, newName) {
+		check(inventoryListId, String);
+		check(newName, String);
+
+		const trimmedName = newName.trim();
+		if (trimmedName.length === 0) {
+			throw new Meteor.Error('name cannot be empty');
+		}
+
+		authCheck(InventoryLists, this.userId, inventoryListId);
+
+		return InventoryLists.update({ _id: inventoryListId }, {
+			$set: { name: trimmedName }
+		});
 	}
 });
 
