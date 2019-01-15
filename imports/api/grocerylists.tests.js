@@ -268,3 +268,73 @@ describe('grocerylists.moveItem', () => {
 		}, Meteor.Error, 'not-authorized');
 	});
 });
+
+describe('grocerylists.archive', () => {
+	const userId = Random.id();
+	let groceryListId;
+
+	beforeEach(() => {
+		GroceryLists.remove({});
+		groceryListId = GroceryLists.insert({
+			name: 'Fruits',
+			owner: userId,
+			createdAt: new Date(),
+			items: ['groceryItemId'],
+			archived: false
+		});
+	});
+
+	it('can archive owned grocery list', () => {
+		const archiveGrocery = Meteor.server.method_handlers['grocerylists.archive'];
+		const invocation = { userId };
+
+		archiveGrocery.apply(invocation, [groceryListId, true]);
+		const grocery = GroceryLists.findOne(groceryListId);
+		assert.equal(grocery.archived, true);
+	});
+
+	it('sets archived to true when not passing archived parameter', () => {
+		const archiveGrocery = Meteor.server.method_handlers['grocerylists.archive'];
+		const invocation = { userId };
+
+		archiveGrocery.apply(invocation, [groceryListId]);
+		const grocery = GroceryLists.findOne(groceryListId);
+		assert.equal(grocery.archived, true);
+	});
+
+	it('sets archived to false when archived parameter is set to false', () => {
+		const archiveGrocery = Meteor.server.method_handlers['grocerylists.archive'];
+		const invocation = { userId };
+
+		archiveGrocery.apply(invocation, [groceryListId, false]);
+		const grocery = GroceryLists.findOne(groceryListId);
+		assert.equal(grocery.archived, false);
+	});
+
+	it('cannot archive others grocery lists', () => {
+		const archiveGrocery = Meteor.server.method_handlers['grocerylists.archive'];
+		const invocation = { userId: `${userId}xxx` };
+
+		assert.throws(() => {
+			archiveGrocery.apply(invocation, [groceryListId]);
+		});
+	});
+
+	it('returns an error if grocery list id passed is empty', () => {
+		const archiveGrocery = Meteor.server.method_handlers['grocerylists.archive'];
+		const invocation = { userId };
+
+		assert.throws(() => {
+			archiveGrocery.apply(invocation, ['']);
+		});
+	});
+
+	it('returns an error if no grocery list id is passed', () => {
+		const archiveGrocery = Meteor.server.method_handlers['grocerylists.archive'];
+		const invocation = { userId };
+
+		assert.throws(() => {
+			archiveGrocery.apply(invocation, []);
+		});
+	});
+});

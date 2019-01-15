@@ -26,7 +26,8 @@ Meteor.methods({
 			name: name.trim(),
 			owner: this.userId,
 			createdAt: new Date(),
-			items: []
+			items: [],
+			archived: false
 		});
 	},
 	'grocerylists.addItem'(groceryListId, groceryItemId) {
@@ -56,6 +57,14 @@ Meteor.methods({
 
 		return GroceryLists.update({ _id: groceryListId }, {
 			$set: { name: trimmedName }
+		});
+	},
+	'grocerylists.archive'(groceryListId, archived = true) {
+		check(groceryListId, String);
+		authCheck(GroceryLists, this.userId, groceryListId);
+
+		return GroceryLists.update({ _id: groceryListId }, {
+			$set: { archived }
 		});
 	},
 	'grocerylists.remove'(groceryListId) {
