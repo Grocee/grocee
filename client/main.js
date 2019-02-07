@@ -10,11 +10,9 @@ Meteor.startup(() => {
 });
 
 Accounts.onEmailVerificationLink((token, done) => {
-	console.log('Verifying email with token: ' + token); // eslint-disable-line
 	Session.set('verifyEmailToken', token);
 });
 
 Accounts.onResetPasswordLink((token, done) => {
-	console.log('Resetting password with token: ' + token); // eslint-disable-line
 	Session.set('resetPasswordToken', token)
 });

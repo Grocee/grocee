@@ -68,12 +68,13 @@ export default class App extends Component {
 			return (<p>Password changed successfully!</p>);
 		} else if (this.state.changePasswordErrorMsg) {
 			return (<p>{this.state.changePasswordErrorMsg}</p>);
+		} else {
+			return (<p>Failed to change password. Please try again later.</p>)
 		}
 	}
 
 	render() {
 		return (
-			//TODO: Use formik to build the form
 			<div>
 				{this.state.emailVerified 
 					? <h3>Email Verified</h3>
