@@ -38,11 +38,15 @@ export default class App extends Component {
 	renderResetPasswordForm() {
 		return (
 			<form onSubmit={this.handleResetPassword}>
-				New Password:<br/>
-				<input type="password" onChange={this.handlePassword} /><br/>
-				Confirm New Password:<br/>
-				<input type="password" onChange={this.handleConfirmPassword} /><br/>
-				<input type="submit" value="Submit" />
+				<div className="form-group">
+          <label>New Password</label>
+          <input type="password" onChange={this.handlePassword} className="form-control"/>
+        </div>
+        <div className="form-group">
+          <label>Confirm New Password</label>
+          <input type="password" onChange={this.handleConfirmPassword} className="form-control"/>
+        </div>
+        <button type="submit" className="btn btn-primary">Submit</button>
 			</form>
 		);
 	}
@@ -71,28 +75,33 @@ export default class App extends Component {
 		} else {
 			return (<p>Failed to change password. Please try again later.</p>)
 		}
-	}
+  }
 
 	render() {
 		return (
-			<div>
-				{this.state.emailVerified 
-					? <h3>Email Verified</h3>
-					: null
-				}
-				{this.state.emailVerifyFailed
-					? <div>
-						<h3>Email Verification Failed</h3>
-						<p>{this.state.reason}</p>
-					</div>
-					: null}
-				{this.state.resetPasswordToken
-					? this.renderResetPasswordForm()
-					: null}
-				{this.state.didSubmitChangePassword
-					? this.renderChangePasswordResult()
-					: null}
-			</div>
+      <div>
+        <nav className="navbar">
+          <span>GROCEE</span>
+        </nav>
+        <div className="container">
+          {this.state.emailVerified 
+            ? <h3>Email Verified!</h3>
+            : null
+          }
+          {this.state.emailVerifyFailed
+            ? <div>
+              <h3>Email Verification Failed</h3>
+              <p>{this.state.reason}</p>
+            </div>
+            : null}
+          {this.state.resetPasswordToken
+            ? this.renderResetPasswordForm()
+            : null}
+          {this.state.didSubmitChangePassword
+            ? this.renderChangePasswordResult()
+            : null}
+        </div>
+      </div>
 		);
 	}
 }
