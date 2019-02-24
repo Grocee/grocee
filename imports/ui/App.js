@@ -81,7 +81,7 @@ export default class App extends Component {
 		return (
       <div>
         <nav className="navbar">
-          <span>GROCEE</span>
+          <span>PANTRI</span>
         </nav>
         <div className="container">
           {this.state.emailVerified 
